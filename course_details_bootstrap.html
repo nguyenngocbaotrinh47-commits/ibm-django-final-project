@@ -1,0 +1,36 @@
+<div class="container mt-5">
+    <h2>Course: {{ course.name }}</h2>
+    <div class="card-columns">
+        {% for lesson in course.lesson_set.all %}
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Lesson {{ forloop.counter }}: {{ lesson.title }}</h5>
+                    <p class="card-text">{{ lesson.content }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <form id="exam_form" action="{% url 'onlinecourse:submit' course.id %}" method="post">
+        {% for lesson in course.lesson_set.all %}
+            {% for question in lesson.question_set.all %}
+                <div class="card mt-1">
+                    <div class="card-header"><h5>{{ question.question_text }}</h5></div>
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {% for choice in question.choice_set.all %}
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input type="checkbox" name="choice_{{choice.id}}" 
+                                           class="form-check-input" id="{{choice.id}}" 
+                                           value="{{choice.id}}">{{ choice.choice_text }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        <input class="btn btn-primary mt-2" type="submit" value="Submit">
+    </form>
+</div>
